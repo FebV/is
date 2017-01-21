@@ -2,3 +2,12 @@
     width: 100%;
     text-align: center;
 }
+/*.bigFont {
+    font-size: 50px;
+}*/
+ul .active a {
+    color: red !important;
+}
+#curTime {
+    color: red;
+}

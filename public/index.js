@@ -1,9 +1,16 @@
 var superObj = {};
 
 function setHead(heads) {
-    var html = '<tr>';
+    var html = '<tr style="text-align:center;font-size:25px">';
     for(var i = 0; i < heads.length; i++) {
-        html += '<th>' + heads[i] + '</th>';
+        if(i == 0)
+            html += '<th width="80px" style="font-size:25px">' + heads[i] + '</th>';
+        else if(i == 1)
+            html += '<th width="300px" style="text-align:center;font-size:25px">' + heads[i] + '</th>';
+        else if(i == 4)
+            html += '<th width="200px" style="text-align:center;font-size:25px">' + heads[i] + '<span style="font-size:15px">(桶/箱)</span></th>'
+        else
+            html += '<th style="text-align:center;font-size:25px">' + heads[i] + '</th>';
     }
     html += '</tr>';
     return html;
@@ -12,33 +19,40 @@ function setHead(heads) {
 function setData(data, button) {
     var html = '';
     for(var i = 0; i < data.length; i++) {
-        html += '<tr>';
+        html += '<tr style="text-align:center">';
         for(var j in data[i]) {
+            if(j == 'remark')
+                continue;
             html += '<td>' + data[i][j] + '</td>';
         }
         if(button)
-            html += '<td><button class="btn btn-info btn-sm" id="modProductButton" data-toggle="modal" data-target="#modProduct" onclick="preMod('+ data[i].id +')">修改</button><button class="btn btn-info btn-sm" id="newChangeButton" data-toggle="modal" data-target="#newChange" onclick="preChange('+ data[i].id +')">变动</button></td></tr>';
+            html += '<td><button class="btn btn-info btn-sm" id="newChangeButton" data-toggle="modal" data-target="#newChange" onclick="preChange('+ data[i].id +')">增减</button><button class="btn btn-info btn-sm" id="modProductButton" data-toggle="modal" data-target="#modProduct" onclick="preMod('+ data[i].id +')">修改</button></td><td>' + data[i]['remark'] + '</td>';
         else
-            html += '</tr>';
+            html += '<td>' + data[i]['remark'] + '</td><td><button class="btn btn-info btn-sm" onclick="preDel('+data[i].id+')">删除</button></td>'
+        // html += '<td>' + data[i]['remark'] + '</td>';
+        html += '</tr>';
     }
     return html;
 }
 
 function newProduct() {
+    if(superObj.loading)
+        return;
+    superObj.loading = true;
     $.ajax({
         url: 'api/inventories',
         method: 'post',
         data: {
             name: $('#newProductName').val(),
             model: $('#newProductModel').val(),
-            spec: $("#newProductSpec").val(),
             amount: $("#newProductAmount").val(),
             location: $('#newProductLocation').val(),
             remark: $('#newProductRemark').val(),
         },
         success: function(res) {
-            $('#newProductButton').click();
+            $('#newProduct').modal('hide');
             loadProduct();
+            superObj.loading = false;
         }
     })
 }
@@ -56,21 +70,21 @@ function preMod(id) {
 function fillInvenForm(product) {
     $('#modProductName').val(product.name);
     $('#modProductModel').val(product.model);
-    $('#modProductSpec').val(product.spec);
     $('#modProductAmount').val(product.amount);
     $('#modProductLocation').val(product.location);
     $('#modProductRemark').val(product.remark);
 }
 
 function modProduct() {
-    console.log('mod');
+    if(superObj.loading)
+        return;
+    superObj.loading = true;
     $.ajax({
         url: 'api/inventories/'+superObj.modId,
         method: 'put',
         data: {
             name: $('#modProductName').val(),
             model: $('#modProductModel').val(),
-            spec: $('#modProductModel').val(),
             amount: $('#modProductAmount').val(),
             location: $('#modProductLocation').val(),
             remark: $('#modProductRemark').val(),
@@ -78,7 +92,8 @@ function modProduct() {
         success: function(res) {
             console.log(res);
             loadProduct();
-            $('#modProductButton').click();
+            $('#modProduct').modal('hide');
+            superObj.loading = false;
         }
     })
 }
@@ -90,6 +105,7 @@ function preChange(id) {
 }
 
 function loadProduct() {
+
     $.ajax({
         url: "api/inventories",
         success: function(res) {
@@ -109,22 +125,40 @@ function loadProduct() {
 }
 
 function newChange() {
+    if(superObj.loading)
+        return;
+    superObj.loading = true;
     $.ajax({
         url: 'api/changes',
         method: 'post',
         data: {
             productId: $('#newChangeProductId').val(),
-            type: $('#newChangeType').val(),
-            amount: $('#newChangeType').val() == '入库' ? $('#newChangeAmount').val() : -1 * $('#newChangeAmount').val(),
+            type: $("input[name='kind']:checked").val(),
+            amount: $("input[name='kind']:checked").val() == '入库' ? $('#newChangeAmount').val() : -1 * $('#newChangeAmount').val(),
             remark: $('#newChangeRemark').val(),
             date: $('#newChangeDate').val()
         },
         success: function(res) {
-            console.log(res);
+            $('#newChange').modal('hide');
+            superObj.loading = false;
             loadProduct();
-            $('#newChangeButton').click();
         }
     })
+}
+
+function preDel(id) {
+    var result = (confirm('确定要删除序号为'+id+'的记录吗'));
+    if(result == true)
+    {
+        $.ajax({
+            url: 'api/changes/'+id,
+            method: 'delete',
+            success: function(res) {
+                console.log(res);
+                loadProduct();
+            }
+        })
+    }
 }
 
 function getDate() {
@@ -139,7 +173,7 @@ function lpad(num) {
     return '' + r;
 }
 
-
+$.ajaxSetup({cache:false});
 $('#invenHead').html(setHead(cfg.invenHead));
 $('#changeHead').html(setHead(cfg.changeHead));
 loadProduct();

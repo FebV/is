@@ -18,14 +18,15 @@
   </head>
   <body>
     <ul class="nav nav-tabs" role="tablist">
-      <li name="nav" role="presentation" class="active"><a href="#inven" role="tab" data-toggle="tab">库存</a></li>
-      <li name="nav" role="presentation"><a href="#change" role="tab" data-toggle="tab">变动</a></li>
+      <li name="nav" role="presentation" class="active"><a style="font-size: 30px" href="#inven" role="tab" data-toggle="tab">库存数量</a></li>
+      <li name="nav" role="presentation"><a href="#change" style="font-size: 30px" role="tab" data-toggle="tab">变动明细</a></li>
+        <h1 style="margin-left:500px;top:0px">鲍店煤矿机电环保科（综机）库存<span style="margin-left: 50px;font-size:25px" id="curTime"></span></h1>
     </ul>
-    <div class="tab-content">
+    <div class="tab-content" style="text-align: center">
 
       <div role="tabpanel" class="tab-pane active" id="inven">
       <div class="thead">
-        <h1>库存</h1>
+
       </div>
       <table class="table table-striped table-bordered">
         <thead id="invenHead"></thead>
@@ -55,16 +56,12 @@
                 <input type="text" class="form-control" id="newProductModel" placeholder="型号">
               </div>
               <div class="form-group">
-                <label for="newProductSpec">规格</label>
-                <input type="text" class="form-control" id="newProductSpec" placeholder="规格">
-              </div>
-              <div class="form-group">
                 <label for="newProductAmount">初始库存</label>
                 <input type="text" class="form-control" id="newProductAmount" placeholder="0">
               </div>
               <div class="form-group">
-                <label for="newProductLocation">位置</label>
-                <input type="text" class="form-control" id="newProductLocation" placeholder="位置">
+                <label for="newProductLocation">库房</label>
+                <input type="text" class="form-control" id="newProductLocation" placeholder="库房">
               </div>
               <div class="form-group">
                 <label for="newProductRemark">备注</label>
@@ -98,10 +95,6 @@
               <div class="form-group">
                 <label for="modProductModel">型号</label>
                 <input type="text" class="form-control" id="modProductModel" placeholder="型号">
-              </div>
-              <div class="form-group">
-                <label for="modProductSpec">规格</label>
-                <input type="text" class="form-control" id="modProductSpec" placeholder="规格">
               </div>
               <div class="form-group">
                 <label for="modProductAmount">当前库存</label>
@@ -140,14 +133,10 @@
                 <label for="newChangeProductId">序号</label>
                 <input type="text" class="form-control" id="newChangeProductId" placeholder="序号">
               </div>
-              <div class="form-group">
-                <label for="newChangeType">变动类型</label>
-                <select name="newChangeType" id="newChangeType">
-                  <option value="入库">入库</option>
-                  <option value="出库">出库</option>
-                </select>
-                <!--<input type="checkbox" class="form-control" id="newChangeType" placeholder="变动类型">
-                <input type="checkbox" class="form-control" id="newChangeType" placeholder="变动类型">-->
+              <div class="form-group" id="newChangeType">
+                <label>变动类型</label>&nbsp;&nbsp;
+                <input type="radio" name="kind" value="出库" checked>出库&nbsp;&nbsp;
+                <input type="radio" name="kind" value="入库">入库
               </div>
               <div class="form-group">
                 <label for="newChangeAmount">变动数量</label>
@@ -173,6 +162,7 @@
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
 
+
       </div>
 
       <div role="tabpanel" class="tab-pane" id="change">
@@ -193,5 +183,14 @@
     <script src="static/bootstrap/js/bootstrap.min.js"></script>
     <script src="config.js"></script>
     <script src="index.js"></script>
+    <script>
+    function curTime(){
+      var d = new Date();
+      return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate() + '&nbsp;&nbsp;&nbsp;&nbsp;' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    }
+    setInterval(function() {
+      $('#curTime').html(curTime());
+    }, 1000);
+      </script>
   </body>
 </html>
