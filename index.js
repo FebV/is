@@ -22,7 +22,7 @@ app.use(function *(next){
     }
   }
 });
-app.use(auth(require('./data/config')));
+// app.use(auth(require('./data/config')));
 
 app.use(require('koa-static')('./public'));
 
@@ -107,7 +107,7 @@ router.del('/api/changes/:id', (ctx, next) => {
 
 app.use(router.routes())
 
-app.listen(80);
+app.listen(2000);
 
 function invenVali(param) {
     let obj = {
