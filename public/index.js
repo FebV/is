@@ -176,4 +176,6 @@ function lpad(num) {
 $.ajaxSetup({cache:false});
 $('#invenHead').html(setHead(cfg.invenHead));
 $('#changeHead').html(setHead(cfg.changeHead));
-loadProduct();
+setInterval(function(){
+    loadProduct();
+}, 5000);
