@@ -107,7 +107,7 @@ router.del('/api/changes/:id', (ctx, next) => {
 
 app.use(router.routes())
 
-app.listen(2000);
+app.listen(2000, 'localhost');
 
 function invenVali(param) {
     let obj = {
