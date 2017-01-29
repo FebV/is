@@ -29,18 +29,15 @@ app.use(require('koa-static')('./public'));
 db.run("CREATE TABLE IF NOT EXISTS inventories (id integer primary key autoincrement, name text, model text, location text, amount integer, remark text)");
 db.run("CREATE TABLE IF NOT EXISTS changes (id integer primary key autoincrement, productId int, type text, amount integer, date text, remark text, del text)");
 
-router.get('/', (ctx, next) => {
-    db.serialize(function() {
-        db.each("SELECT * FROM inventories where id = 1", function(err, row) {
-        });
-    });
+router.get('/api', (ctx, next) => {
+    // db.run("select * from inventories");
     ctx.body = 'index';
 });
 
 router.get('/api/inventories', async (ctx, next) => {
     let r = null;
     await new Promise((resolve, reject) =>{
-        db.all("select * from inventories", (err, rows) => {
+        db.all("select id, name, model, location, amount, remark from inventories where del = 'no'", (err, rows) => {
             resolve(rows);
         });
     }).then(rows => {
@@ -52,7 +49,7 @@ router.get('/api/inventories', async (ctx, next) => {
 
 router.post('/api/inventories', (ctx, next) => {
     const p = invenVali(ctx.request.body);
-    db.run(`insert into inventories values(null, '${p.name}', '${p.model}', '${p.location}', '${p.amount}', '${p.remark}')`);
+    db.run(`insert into inventories values(null, '${p.name}', '${p.model}', '${p.location}', '${p.amount}', '${p.remark}', 'no')`);
     ctx.body = 'ok';
 })
 
@@ -62,12 +59,21 @@ router.put('/api/inventories/:id', (ctx, next) => {
         db.run(`update inventories set '${i}' = '${p[i]}' where id = '${ctx.params.id}'`);
     }
     ctx.body = 'ok';
-})
+});
+
+router.del('/api/inventories/:id', (ctx, next) => {
+    const p = ctx.params.id;
+    if(!p)
+        return ctx.body = 'fail';
+    db.run(`update inventories set del = 'yes' where id = ${p}`);
+    ctx.body = 'ok';
+});
+
 
 router.get('/api/changes', async (ctx, next) => {
     let r = null;
     await new Promise((resolve, reject) =>{
-        db.all("select c.id as id, name, model, type, c.amount as amount, date, c.remark as remark from changes as c left join inventories as i on i.id = c.productId where del = 'no'", (err, rows) => {
+        db.all("select c.id as id, name, model, type, c.amount as amount, date, c.remark as remark from changes as c left join inventories as i on i.id = c.productId where c.del = 'no'", (err, rows) => {
             resolve(rows);
         });
     }).then(rows => {

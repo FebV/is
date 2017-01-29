@@ -19,10 +19,19 @@ function setHead(heads) {
 function setData(data, button) {
     var html = '';
     for(var i = 0; i < data.length; i++) {
+        if(i+1 == data.length && data[i].location) {
+            superObj.lastItem = data[i];
+            console.log(`${i} ${data[i].name}`);
+        }
         html += '<tr style="text-align:center">';
         for(var j in data[i]) {
             if(j == 'remark')
                 continue;
+            if(j == 'id') {
+                html += '<td>' + (i+1) + '</td>';
+                continue;
+            }
+
             html += '<td>' + data[i][j] + '</td>';
         }
         if(button)
@@ -171,6 +180,20 @@ function lpad(num) {
     if(r < 10)
         r = '0' + r;
     return '' + r;
+}
+
+function delLast() {
+    var ans = confirm('确认删除 ' + superObj.lastItem.name + ' ?');
+    if(ans == true) {
+        $.ajax({
+            url: 'api/inventories/'+superObj.lastItem.id,
+            method: 'delete',
+            success: function(res) {
+                loadProduct();
+                alert(res == 'ok' ? '删除成功' : '删除失败');
+            }
+        });
+    }
 }
 
 $.ajaxSetup({cache:false});
