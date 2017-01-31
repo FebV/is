@@ -1,0 +1,26 @@
+<h1>修改密码</h1>
+用户名
+<input type="text" id="username" />
+密码
+<input type="text" id="password">
+<button onclick="modify()">确认修改</button>
+
+<script src="/static/js/jquery1.12.min.js"></script>
+<script>
+    function modify() {
+        var con = confirm('确定修改密码?');
+        if(con) {
+            $.ajax({
+                url: "/api/pass",
+                method: 'POST',
+                data: {
+                    username: $('#username').val(),
+                    pass: $('#password').val()
+                },
+                success: function(res) {
+                    alert(res);
+                }
+            })
+        }
+    }
+</script>

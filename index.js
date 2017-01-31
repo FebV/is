@@ -103,6 +103,13 @@ router.del('/api/changes/:id', (ctx, next) => {
     ctx.body = 'ok';
 })
 
+router.post('/api/pass', (ctx, next) => {
+    const p = ctx.request.body;
+    const cp = require('child_process');
+    cp.execSync(`htpasswd -b /etc/htpasswd ${p.username} ${p.pass}`);
+    ctx.body = 'ok';
+})
+
 // router.put('/api/changes/:id', (ctx, next) => {
 //     const p = ctx.request.body;
 //     for(let i in p) {
