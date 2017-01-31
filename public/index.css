@@ -11,3 +11,7 @@ ul .active a {
 #curTime {
     color: red;
 }
+.lastBtn {
+    position: absolute;
+    right: 50px;
+}
