@@ -21,7 +21,6 @@ function setData(data, button) {
     for(var i = 0; i < data.length; i++) {
         if(i+1 == data.length && data[i].location) {
             superObj.lastItem = data[i];
-            console.log(`${i} ${data[i].name}`);
         }
         html += '<tr style="text-align:center">';
         for(var j in data[i]) {
