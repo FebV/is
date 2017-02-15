@@ -34,7 +34,7 @@ function setData(data, button) {
             html += '<td>' + data[i][j] + '</td>';
         }
         if(button)
-            html += '<td><button class="btn btn-info btn-sm" id="newChangeButton" data-toggle="modal" data-target="#newChange" onclick="preChange('+ data[i].id +')">增减</button><button class="btn btn-info btn-sm" id="modProductButton" data-toggle="modal" data-target="#modProduct" onclick="preMod('+ data[i].id +')">修改</button></td><td>' + data[i]['remark'] + '</td>';
+            html += '<td><button class="btn btn-info btn-sm" id="newChangeButton" data-toggle="modal" data-target="#newChange" onclick="preChange('+ data[i].id +')">增减</button><button class="btn btn-info btn-sm" id="modProductButton" data-toggle="modal" data-target="#modProduct" onclick="preMod('+ data[i].id +')">修改</button></td><td>' + data[i]['remark'] + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-info btn-sm" id="newDeleteButton" onclick="preDelete('+ data[i].id +')">删除</button></td>';
         else
             html += '<td>' + data[i]['remark'] + '</td><td><button class="btn btn-info btn-sm" onclick="preDel('+data[i].id+')">删除</button></td>'
         // html += '<td>' + data[i]['remark'] + '</td>';
@@ -154,6 +154,7 @@ function newChange() {
     })
 }
 
+//delete change
 function preDel(id) {
     var result = (confirm('确定要删除序号为'+id+'的记录吗'));
     if(result == true)
@@ -168,6 +169,23 @@ function preDel(id) {
         })
     }
 }
+
+//delete inventory
+function preDelete(id) {
+    var result = (confirm('确定要删除序号为'+id+'的库存吗'));
+    if(result == true)
+    {
+        $.ajax({
+            url: 'api/inventories/'+id,
+            method: 'delete',
+            success: function(res) {
+                console.log(res);
+                loadProduct();
+            }
+        })
+    }
+}
+
 
 function getDate() {
     var d = new Date();
